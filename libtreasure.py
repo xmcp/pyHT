@@ -5,7 +5,7 @@ import math
 GX=23
 GY=35
 ELEM_PROB=.1
-EVIL_PROB=.075
+EVIL_PROB=.1
 HEART_LIFE=25
 BURN_LIFE=20
 RESTORE_TIME=12
@@ -163,6 +163,7 @@ class Player:
 class Game:
     def __init__(self):
         self.g=None
+        self.level=-1
         self.cur=0
         self.goal=0
         self.fires=set()
@@ -181,6 +182,7 @@ class Game:
         for y,x in random.sample(available,math.ceil(GX*GY*ELEM_PROB)):
             self.g[y][x]=random.choice(Elem.chunk+[Elem.heart])
         #init data
+        self.level=level
         self.cur=0
         self.goal=GOAL_OF_LEVEL(level)
         self.fires=set()
@@ -218,6 +220,6 @@ class Game:
     def tick(self):
         self.player.tick()
         self.tick_item()
-        if self.fire_ticked or random.random()<.5:
+        if self.fire_ticked or random.random()<.3:
             self.tick_fire()
         self.fire_ticked=not self.fire_ticked
