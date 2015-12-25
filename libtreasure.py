@@ -54,7 +54,7 @@ class Fire:
         elif self.y<GY-1 and self.game.g[self.y+1][self.x]==Elem.player: #beat down
             if self.game.player.hurt(BURN_LIFE):
                  raise _FireStopped()
-        elif self.game.g[self.y][self.x+1] in _t and self.game.g[self.y][self.x-1] in _t: #do nothing A
+        elif 0<self.x<GX-1 and self.game.g[self.y][self.x+1] in _t and self.game.g[self.y][self.x-1] in _t: #do nothing A
             return
         elif (self.x==0 and self.game.g[self.y][1] in _t) or (self.x==GX-1 and self.game.g[self.y][GX-2] in _t): #do nothing B
             return
@@ -62,7 +62,7 @@ class Fire:
             if self.x==0: self.left=False
             if self.x==GX-1: self.left=True
             nextx=self.x-1 if self.left else self.x+1
-            if self.game.g[self.y][nextx] in (Elem.dirt,Elem.evildirt,Elem.fire):
+            if self.game.g[self.y][nextx] in _t:
                 self.left=not self.left
                 nextx=self.x-1 if self.left else self.x+1
 
