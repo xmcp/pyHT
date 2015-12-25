@@ -35,12 +35,18 @@ material={
 }
 
 def cmd(value):
-    game.player.command=value
+    cmds.put(value)
 
 def game_controller():
     init_level(1)
     while True:
         try:
+            try:
+                if not game.player.command:
+                    x=cmds.get_nowait()
+                    game.player.command=x
+            except queue.Empty:
+                game.player.command=''
             game.tick()
             tick_routine()
             time.sleep(TICKTIME)
