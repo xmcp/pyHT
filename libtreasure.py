@@ -12,12 +12,10 @@ RESTORE_TIME=12
 GOAL_OF_LEVEL=lambda level:300+level*100
 
 class GameOver(Exception):
-    def __str__(self):
-        return 'Game Over'
+    def __str__(self):  return 'Game Over'
 
 class YouWin(Exception):
-    def __str__(self):
-        return 'You Win'
+    def __str__(self): return 'You Win'
 
 class _FireStopped(Exception):
     pass
@@ -51,9 +49,14 @@ class Fire:
             self.game.g[self.y+1][self.x]=Elem.fire
             self.game.g[self.y][self.x]=Elem.empty
             self.y+=1
-        elif self.game.g[self.y+1][self.x] in Elem.chunk+[Elem.heart]: #burn down
+        elif self.y<GY-1 and self.game.g[self.y+1][self.x] in Elem.chunk+[Elem.heart]: #burn down
             self.game.new_fire(self.y+1,self.x)
-        elif self.game.g[self.y][self.x+1] in _t and self.game.g[self.y][self.x-1] in _t: #do nothing
+        elif self.y<GY-1 and self.game.g[self.y+1][self.x]==Elem.player: #beat down
+            if self.game.player.hurt(BURN_LIFE):
+                 raise _FireStopped()
+        elif self.game.g[self.y][self.x+1] in _t and self.game.g[self.y][self.x-1] in _t: #do nothing A
+            return
+        elif (self.x==0 and self.game.g[self.y][1] in _t) or (self.x==GX-1 and self.game.g[self.y][GX-2] in _t): #do nothing B
             return
         else:
             if self.x==0: self.left=False
@@ -71,7 +74,7 @@ class Fire:
                 self.game.new_fire(self.y,nextx)
             elif self.game.g[self.y][nextx]==Elem.fire: #ourselves, just keep calm
                 pass
-            elif self.game.g[self.y][nextx]==Elem.player: #beat it
+            elif self.game.g[self.y][nextx]==Elem.player: #beat next
                 if self.game.player.hurt(BURN_LIFE):
                     raise _FireStopped()
             else:
@@ -218,8 +221,8 @@ class Game:
         self.fires.add(Fire(self,y,x))
 
     def tick(self):
-        self.player.tick()
         self.tick_item()
-        if self.fire_ticked or random.random()<.3:
+        if self.fire_ticked:
             self.tick_fire()
         self.fire_ticked=not self.fire_ticked
+        self.player.tick()
