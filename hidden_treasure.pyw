@@ -15,13 +15,12 @@ tk.resizable(False,False)
 
 DESCRIPTION='您的使命是搜寻地下宝藏。\n按 ← 向左移，按 → 向右移，按 ↑ 向前挖，按 ↓ 向下挖。\n'\
     '当心触火，用心自疗，并在健康降至零点之前到达目标。'
-ABOUT='名称：挖宝藏\n开发者：@xmcp'
 game=lib.Game()
 cmds=queue.Queue()
 SZ=32
 BORDER=10
 TICKTIME=.4
-INIT_LEVEL=11
+INIT_LEVEL=1
 paused=False
 moneymsg=StringVar()
 hudvar=StringVar()
@@ -62,7 +61,7 @@ def show_hud(msg):
 
 def game_controller():
     init_level(INIT_LEVEL)
-    show_hud('等级 %d：$ %d'%(game.level,game.goal))
+    show_hud('等级 %d：$%d'%(game.level,game.goal))
     while True:
         if paused:
             time.sleep(.1)
@@ -81,11 +80,11 @@ def game_controller():
             show_hud('您输了')
             show_hud('您的成绩：等级 %d'%game.level)
             init_level(INIT_LEVEL)
-            show_hud('等级 %d：$ %d'%(game.level,game.goal))
+            show_hud('等级 %d：$%d'%(game.level,game.goal))
         except lib.YouWin:
             show_hud('您赢了')
             init_level(game.level+1)
-            show_hud('等级 %d：$ %d'%(game.level,game.goal))
+            show_hud('等级 %d：$%d'%(game.level,game.goal))
 
 
 def tick_routine(redraw=False):
@@ -103,8 +102,8 @@ def tick_routine(redraw=False):
                 else:
                     dg[y][x]=canvas.create_image(x*SZ,y*SZ,anchor='nw',image=material[game.g[y][x]])
     #update data
-    tk.title('挖宝藏 [ 等级 %d ]'%game.level)
-    moneymsg.set('$ %d / %d'%(game.cur,game.goal))
+    tk.title('挖宝藏 Lv %d'%game.level)
+    moneymsg.set('$ %d / %d '%(game.cur,game.goal))
     moneybar['value']=game.cur
     lifebar['value']=game.player.life
     #focus on player
@@ -127,9 +126,9 @@ f=Frame(tk)
 f.grid(row=0,column=0,sticky='we')
 f.columnconfigure(2,weight=1)
 
-lifebar=Progressbar(f,orient=HORIZONTAL,length=100,value=100,maximum=100,mode='determinate')
+lifebar=Progressbar(f,orient=HORIZONTAL,length=80,value=100,maximum=100,mode='determinate')
 lifebar.grid(row=0,column=0)
-Label(f,text='生命').grid(row=0,column=1)
+Label(f,text=' HP').grid(row=0,column=1)
 Label(f).grid(row=0,column=2,sticky='we')
 Label(f,textvariable=moneymsg).grid(row=0,column=3)
 moneybar=Progressbar(f,orient=HORIZONTAL,length=80,value=0,maximum=1,mode='determinate')
@@ -137,7 +136,7 @@ moneybar.grid(row=0,column=4)
 
 canvas=Canvas(tk,width=10*SZ,height=10*SZ,bg='#770055')
 canvas.grid(row=1,column=0,sticky='nswe')
-hud=Label(tk,textvariable=hudvar,background='#000055',foreground='#ffffff',font='黑体 -30')
+hud=Label(tk,textvariable=hudvar,background='#000055',foreground='#ffffff',font='黑体 -25')
 
 infof=Frame(tk)
 infof.grid(row=2,column=0,sticky='we')
@@ -146,9 +145,7 @@ infof.columnconfigure(1,weight=1)
 pausebtn=Button(infof,text='暂停',width=8,command=pause)
 pausebtn.grid(row=0,column=0)
 Label(infof).grid(row=0,column=1,sticky='we')
-Button(infof,text='操作说明',width=8,command=lambda:messagebox.showinfo('操作说明',DESCRIPTION)).grid(row=0,column=2)
-Button(infof,text='关于',width=8,command=lambda:messagebox.showinfo('关于',ABOUT)).grid(row=0,column=3)
-
+Button(infof,text='操作说明',width=8,command=lambda:messagebox.showinfo('操作说明',DESCRIPTION)).grid(row=0,column=2, columnspan=2)
 
 tk.bind_all('<Left>',lambda *_:cmd(lib.Command.left))
 tk.bind_all('<Right>',lambda *_:cmd(lib.Command.right))
